@@ -1,43 +1,48 @@
 require("dotenv").config();
+
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
-require("dotenv").config();
-
-const app = express();
-
-// Middleware
-app.use(cors());
-app.use(express.json());
-
-// Debug
-console.log("JWT_SECRET:", process.env.JWT_SECRET ? "Loaded" : "Missing");
 
 // Routes
 const authRoutes = require("./routes/auth");
 const userRoutes = require("./routes/user");
 const projectRoutes = require("./routes/project");
-const taskRoutes = require("./routes/task");   
+const taskRoutes = require("./routes/task");
 
-app.use("/api/auth", authRoutes);
-app.use("/api/user", userRoutes);
-app.use("/api/projects", projectRoutes);
-app.use("/api/tasks", taskRoutes);    
-
-// Middleware imports
+// Middleware
 const auth = require("./middleware/auth");
 const role = require("./middleware/role");
 
-// ✅ Protected Route
+const app = express();
+
+// =======================
+// 🔹 Middleware
+// =======================
+app.use(cors());
+app.use(express.json());
+
+// Debug (optional)
+console.log("JWT_SECRET:", process.env.JWT_SECRET ? "Loaded" : "Missing");
+
+// =======================
+// 🔹 Routes
+// =======================
+app.use("/api/auth", authRoutes);
+app.use("/api/user", userRoutes);
+app.use("/api/projects", projectRoutes);
+app.use("/api/tasks", taskRoutes);
+
+// =======================
+// 🔹 Protected Routes
+// =======================
 app.get("/api/protected", auth, (req, res) => {
-  console.log("✅ Protected route hit");
   res.json({
     msg: "Protected route accessed",
     user: req.user,
   });
 });
 
-// ✅ Admin Route
 app.get("/api/admin", auth, role("Admin"), (req, res) => {
   res.json({
     msg: "Welcome Admin",
@@ -45,26 +50,32 @@ app.get("/api/admin", auth, role("Admin"), (req, res) => {
   });
 });
 
-// ✅ Test Route
+// =======================
+// 🔹 Test Routes
+// =======================
 app.get("/test", (req, res) => {
-  console.log("✅ TEST HIT");
   res.send("TEST WORKING");
 });
 
-// Root route
 app.get("/", (req, res) => {
   res.send("API is running...");
 });
 
-// Connect DB
+// =======================
+// 🔹 MongoDB Connection
+// =======================
 mongoose
   .connect(process.env.MONGO_URI)
-  .then(() => console.log("MongoDB Connected"))
-  .catch((err) => console.log("DB Error:", err));
+  .then(() => {
+    console.log("✅ MongoDB Connected");
 
-// Start server
-const PORT = process.env.PORT || 5000;
-
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+    // Start server ONLY after DB connects
+    const PORT = process.env.PORT || 5000;
+    app.listen(PORT, () => {
+      console.log(`🚀 Server running on port ${PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.error("❌ DB Error:", err.message);
+    process.exit(1); // stop app if DB fails
+  });

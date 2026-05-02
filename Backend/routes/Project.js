@@ -1,45 +1,93 @@
 const express = require("express");
 const router = express.Router();
 
-const auth = require("../middleware/auth");
-const role = require("../middleware/role");
 const Project = require("../models/Project");
+const auth = require("../middleware/auth");
 
 
-// ✅ 1. CREATE PROJECT (Admin only)
-router.post("/", auth, role("Admin"), async (req, res) => {
+// 🔹 GET all projects (only logged-in user's projects)
+router.get("/", auth, async (req, res) => {
   try {
-    const { name, description, members } = req.body;
+    const projects = await Project.find({ user: req.user.id }).sort({ createdAt: -1 });
+    res.json(projects);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
-    const project = new Project({
-      name,
+
+// 🔹 CREATE new project
+router.post("/", auth, async (req, res) => {
+  try {
+    const { title, description } = req.body;
+
+    if (!title) {
+      return res.status(400).json({ msg: "Title is required" });
+    }
+
+    const newProject = new Project({
+      title,
       description,
-      members,
-      createdBy: req.user.id
+      user: req.user.id,
     });
+
+    const savedProject = await newProject.save();
+    res.json(savedProject);
+
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
+// 🔹 UPDATE project
+router.put("/:id", auth, async (req, res) => {
+  try {
+    const { title, description } = req.body;
+
+    let project = await Project.findById(req.params.id);
+
+    if (!project) {
+      return res.status(404).json({ msg: "Project not found" });
+    }
+
+    // 🔒 Only owner can update
+    if (project.user.toString() !== req.user.id) {
+      return res.status(401).json({ msg: "Not authorized" });
+    }
+
+    project.title = title || project.title;
+    project.description = description || project.description;
 
     await project.save();
     res.json(project);
 
   } catch (err) {
-    console.error(err.message);
-    res.status(500).send("Server error");
+    res.status(500).json({ error: err.message });
   }
 });
 
 
-// ✅ 2. GET ALL PROJECTS  👈 ADD HERE (below POST)
-router.get("/", auth, async (req, res) => {
+// 🔹 DELETE project
+router.delete("/:id", auth, async (req, res) => {
   try {
-    const projects = await Project.find()
-      .populate("createdBy", "name email")
-      .populate("members", "name email");
+    const project = await Project.findById(req.params.id);
 
-    res.json(projects);
+    if (!project) {
+      return res.status(404).json({ msg: "Project not found" });
+    }
+
+    // 🔒 Only owner can delete
+    if (project.user.toString() !== req.user.id) {
+      return res.status(401).json({ msg: "Not authorized" });
+    }
+
+    await project.deleteOne();
+
+    res.json({ msg: "Project deleted" });
 
   } catch (err) {
-    console.error(err.message);
-    res.status(500).send("Server error");
+    res.status(500).json({ error: err.message });
   }
 });
 
