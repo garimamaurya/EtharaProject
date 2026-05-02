@@ -1,4 +1,5 @@
 console.log("🔥 THIS IS THE REAL SERVER FILE RUNNING");
+require("dotenv").config();
 
 const express = require("express");
 const mongoose = require("mongoose");
