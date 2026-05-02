@@ -1,0 +1,233 @@
+/* 🌍 Global */
+body {
+  font-family: "Segoe UI", sans-serif;
+  margin: 0;
+  padding: 0;
+  background: #f1f5f9;
+  color: #1e293b;
+}
+
+/* 🔥 Layout */
+.layout {
+  display: flex;
+  transition: background 0.3s ease;
+}
+
+/* 📌 Sidebar */
+.sidebar {
+  width: 220px;
+  height: 100vh;
+  background: linear-gradient(180deg, #0f172a, #1e293b);
+  color: white;
+  padding: 20px;
+  transition: width 0.3s ease;
+}
+
+.sidebar h2 {
+  margin-bottom: 20px;
+}
+
+/* 🔻 Collapsed */
+.sidebar.collapsed {
+  width: 70px;
+}
+
+.sidebar.collapsed h2,
+.sidebar.collapsed button span {
+  display: none;
+}
+
+/* Sidebar buttons */
+.sidebar button {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  margin: 8px 0;
+  padding: 10px;
+  border: none;
+  background: transparent;
+  color: #cbd5e1;
+  text-align: left;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+/* Hover */
+.sidebar button:hover {
+  background: rgba(255,255,255,0.1);
+  transform: translateX(5px);
+}
+
+/* Active */
+.sidebar button.active {
+  background: #2563eb;
+  color: white;
+}
+
+/* Logout */
+.logout-btn {
+  background: #ef4444 !important;
+  color: white;
+}
+
+/* 🧾 Main */
+.main {
+  flex: 1;
+  padding: 25px;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+/* 🧾 Card */
+.card {
+  background: white;
+  padding: 18px;
+  margin-top: 15px;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  transition: all 0.2s ease;
+}
+
+/* Hover */
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+}
+
+/* ✏ Inputs */
+input {
+  padding: 10px;
+  margin: 6px;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  outline: none;
+  transition: 0.2s;
+}
+
+input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37,99,235,0.2);
+}
+
+/* 🔘 Buttons */
+button {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  margin: 5px;
+  transition: all 0.2s ease;
+}
+
+/* ➕ Add */
+.add-btn {
+  background: #2563eb;
+  color: white;
+}
+
+.add-btn:hover {
+  background: #1d4ed8;
+}
+
+/* ✅ Complete */
+.complete-btn {
+  background: #10b981;
+  color: white;
+}
+
+.complete-btn:hover {
+  background: #059669;
+}
+
+/* ❌ Delete */
+.delete-btn {
+  background: #ef4444;
+  color: white;
+}
+
+.delete-btn:hover {
+  background: #dc2626;
+}
+
+/* ✏ Edit */
+.edit-btn {
+  background: #f59e0b;
+  color: white;
+}
+
+.edit-btn:hover {
+  background: #d97706;
+}
+
+/* 📌 Status */
+.status {
+  font-weight: 600;
+}
+
+.status.completed {
+  color: #10b981;
+}
+
+.status.pending {
+  color: #f59e0b;
+}
+
+/* 🔍 Active filter */
+button.active {
+  outline: 2px solid #2563eb;
+}
+
+/* ========================= */
+/* 🌙 DARK MODE */
+/* ========================= */
+
+.layout.dark {
+  background: #0f172a;
+}
+
+/* Main */
+.layout.dark .main {
+  background: #0f172a;
+  color: #e2e8f0;
+}
+
+/* Cards */
+.layout.dark .card {
+  background: #1e293b;
+  color: #e2e8f0;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.4);
+}
+
+/* Inputs */
+.layout.dark input {
+  background: #0f172a;
+  color: white;
+  border: 1px solid #334155;
+}
+
+.layout.dark input:focus {
+  border-color: #60a5fa;
+  box-shadow: 0 0 0 2px rgba(96,165,250,0.3);
+}
+
+/* Sidebar */
+.layout.dark .sidebar {
+  background: linear-gradient(180deg, #020617, #0f172a);
+}
+
+/* Sidebar text */
+.layout.dark .sidebar button {
+  color: #94a3b8;
+}
+
+/* Active button */
+.layout.dark .sidebar button.active {
+  background: #3b82f6;
+  color: white;
+}
+
+/* Hover */
+.layout.dark .sidebar button:hover {
+  background: rgba(255,255,255,0.08);
+}
