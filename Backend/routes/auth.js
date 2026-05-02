@@ -4,39 +4,42 @@ const router = express.Router();
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
+// ⚠️ IMPORTANT: filename must be lowercase -> user.js
 const User = require("../models/user");
 
 
-// 🔐 SIGNUP (Register New User)
+// =======================
+// 🔹 SIGNUP (Register)
+// =======================
 router.post("/signup", async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
-    // ✅ validation
+    // ✅ Validation
     if (!name || !email || !password) {
       return res.status(400).json({ msg: "All fields are required" });
     }
 
-    // ✅ check existing user
+    // ✅ Check existing user
     let user = await User.findOne({ email });
     if (user) {
       return res.status(400).json({ msg: "User already exists" });
     }
 
-    // ✅ hash password
+    // ✅ Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // ✅ create user
+    // ✅ Create user
     user = new User({
       name,
       email,
       password: hashedPassword,
-      role: "user", // default role
+      role: "user",
     });
 
     await user.save();
 
-    // ✅ create token (auto login after signup)
+    // ✅ Generate token
     const token = jwt.sign(
       {
         id: user._id,
@@ -64,29 +67,31 @@ router.post("/signup", async (req, res) => {
 });
 
 
-// 🔐 LOGIN
+// =======================
+// 🔹 LOGIN
+// =======================
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // ✅ validation
+    // ✅ Validation
     if (!email || !password) {
       return res.status(400).json({ msg: "All fields are required" });
     }
 
-    // ✅ find user
+    // ✅ Find user
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(400).json({ msg: "Invalid credentials" });
     }
 
-    // ✅ compare password
+    // ✅ Compare password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(400).json({ msg: "Invalid credentials" });
     }
 
-    // ✅ create token
+    // ✅ Generate token
     const token = jwt.sign(
       {
         id: user._id,
